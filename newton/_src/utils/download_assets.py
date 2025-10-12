@@ -270,7 +270,9 @@ def download_git_folder(
 
     # Set up cache directory
     if cache_dir is None:
-        cache_dir = _get_newton_cache_dir()
+        from newton import MODELS_DIR
+        cache_dir = MODELS_DIR
+        # cache_dir = os.path.join(tempfile.gettempdir(), "newton_git_cache")
     cache_path = Path(cache_dir)
     cache_path.mkdir(parents=True, exist_ok=True)
 

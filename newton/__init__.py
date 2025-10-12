@@ -138,3 +138,8 @@ __all__ += [
     "utils",
     "viewer",
 ]
+
+import os
+
+MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
+__all__.append(MODELS_DIR)

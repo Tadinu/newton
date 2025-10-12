@@ -1,3 +1,9 @@
+# Imgui
+*imgui.ini
+
+# Models
+newton/models
+
 # Python-generated files
 __pycache__/
 *.py[oc]
