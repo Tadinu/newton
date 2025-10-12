@@ -352,6 +352,9 @@ def download_git_folder(
     if cache_dir is None:
         cache_dir = config.cache_dir_assets
     if cache_dir is None:
+        from newton import MODELS_DIR
+        cache_dir = MODELS_DIR
+    if cache_dir is None:
         # Callers receive a Path and may load referenced files later. Keep each
         # uncached download alive until exit, without reusing it on later calls.
         temporary_cache = tempfile.mkdtemp(prefix="newton-assets-")

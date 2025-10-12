@@ -166,3 +166,10 @@ from ._src.diagnostics import install_console_fallback as _install_console_fallb
 
 _install_console_fallback()
 del _install_console_fallback
+
+import os
+
+MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
+__all__.append(MODELS_DIR)
+
+        
