@@ -1208,6 +1208,9 @@ class ModelBuilder:
                 use the same layout, selected by the ``paired_samples``
                 argument to :meth:`Mesh.build_sdf`.
         """
+        self.model_name: str = ""
+        """Model name"""
+
         self.world_count: int = 0
         """Number of worlds accumulated for :attr:`Model.world_count`."""
 

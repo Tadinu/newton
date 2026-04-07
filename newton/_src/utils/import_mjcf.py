@@ -72,9 +72,9 @@ def _default_path_resolver(base_dir: str | None, file_path: str) -> str:
 
 
 def _load_and_expand_mjcf(
-    source: str,
-    path_resolver: Callable[[str | None, str], str] = _default_path_resolver,
-    included_files: set[str] | None = None,
+        source: str,
+        path_resolver: Callable[[str | None, str], str] = _default_path_resolver,
+        included_files: set[str] | None = None,
 ) -> tuple[ET.Element, str | None]:
     """Load MJCF source and recursively expand <include> elements.
 
@@ -178,40 +178,40 @@ AttributeFrequency = Model.AttributeFrequency
 
 
 def parse_mjcf(
-    builder: ModelBuilder,
-    source: str,
-    *,
-    xform: Transform | None = None,
-    floating: bool | None = None,
-    base_joint: dict | None = None,
-    parent_body: int = -1,
-    armature_scale: float = 1.0,
-    scale: float = 1.0,
-    hide_visuals: bool = False,
-    parse_visuals_as_colliders: bool = False,
-    parse_meshes: bool = True,
-    parse_sites: bool = True,
-    parse_visuals: bool = True,
-    parse_mujoco_options: bool = True,
-    up_axis: AxisType = Axis.Z,
-    ignore_names: Sequence[str] = (),
-    ignore_classes: Sequence[str] = (),
-    visual_classes: Sequence[str] = ("visual",),
-    collider_classes: Sequence[str] = ("collision",),
-    no_class_as_colliders: bool = True,
-    force_show_colliders: bool = False,
-    enable_self_collisions: bool = True,
-    ignore_inertial_definitions: bool = False,
-    collapse_fixed_joints: bool = False,
-    collapse_massless_fixed_root: bool = False,
-    verbose: bool = False,
-    skip_equality_constraints: bool = False,
-    convert_mjc_equality_constraints: bool = True,
-    convert_3d_hinge_to_ball_joints: bool = False,
-    mesh_maxhullvert: int | None = None,
-    ctrl_direct: bool = False,
-    path_resolver: Callable[[str | None, str], str] | None = None,
-    override_root_xform: bool = False,
+        builder: ModelBuilder,
+        source: str,
+        *,
+        xform: Transform | None = None,
+        floating: bool | None = None,
+        base_joint: dict | None = None,
+        parent_body: int = -1,
+        armature_scale: float = 1.0,
+        scale: float = 1.0,
+        hide_visuals: bool = False,
+        parse_visuals_as_colliders: bool = False,
+        parse_meshes: bool = True,
+        parse_sites: bool = True,
+        parse_visuals: bool = True,
+        parse_mujoco_options: bool = True,
+        up_axis: AxisType = Axis.Z,
+        ignore_names: Sequence[str] = (),
+        ignore_classes: Sequence[str] = (),
+        visual_classes: Sequence[str] = ("visual",),
+        collider_classes: Sequence[str] = ("collision",),
+        no_class_as_colliders: bool = True,
+        force_show_colliders: bool = False,
+        enable_self_collisions: bool = True,
+        ignore_inertial_definitions: bool = False,
+        collapse_fixed_joints: bool = False,
+        collapse_massless_fixed_root: bool = False,
+        verbose: bool = False,
+        skip_equality_constraints: bool = False,
+        convert_mjc_equality_constraints: bool = True,
+        convert_3d_hinge_to_ball_joints: bool = False,
+        mesh_maxhullvert: int | None = None,
+        ctrl_direct: bool = False,
+        path_resolver: Callable[[str | None, str], str] | None = None,
+        override_root_xform: bool = False,
     legacy_margin_gap: bool = False,
 ):
     """
@@ -354,6 +354,7 @@ def parse_mjcf(
 
     root, base_dir = _load_and_expand_mjcf(source, path_resolver)
     mjcf_dirname = base_dir or "."  # Backward compatible fallback for mesh paths
+    builder.model_name = root.attrib.get('model', str())
 
     contact_sections = root.findall("contact")
 
@@ -425,6 +426,8 @@ def parse_mjcf(
         # extrinsic / fixed in the parent frame); keep it.
         eulerseq = compiler_attribs.get("eulerseq", "xyz")
         mesh_dir = compiler_attribs.get("meshdir", ".")
+        if not mesh_dir:
+            mesh_dir = compiler_attribs.get("assetdir", ".")
         texture_dir = compiler_attribs.get("texturedir", mesh_dir)
         fitaabb = compiler_attribs.get("fitaabb", "false").lower() == "true"
     else:
@@ -1140,10 +1143,10 @@ def parse_mjcf(
                             [
                                 m.indices.reshape(-1, 3) + offset
                                 for m, offset in zip(
-                                    m_meshes,
-                                    np.cumsum([0] + [len(m.vertices) for m in m_meshes[:-1]]),
-                                    strict=True,
-                                )
+                                m_meshes,
+                                np.cumsum([0] + [len(m.vertices) for m in m_meshes[:-1]]),
+                                strict=True,
+                            )
                             ],
                             axis=0,
                         ).flatten()
@@ -1582,12 +1585,12 @@ def parse_mjcf(
         return incoming_xform * wp.transform(frame_pos, frame_rot)
 
     def _process_body_geoms(
-        geoms,
-        defaults: dict,
-        body_name: str,
-        link: int,
-        incoming_xform: wp.transform | None = None,
-        label_prefix: str = "",
+            geoms,
+            defaults: dict,
+            body_name: str,
+            link: int,
+            incoming_xform: wp.transform | None = None,
+            label_prefix: str = "",
         infer_inertia_from_geoms: bool = False,
     ) -> list:
         """Process geoms for a body, partitioning into visuals and colliders.
@@ -1715,14 +1718,14 @@ def parse_mjcf(
         return visual_shape_indices
 
     def process_frames(
-        frames,
-        parent_body: int,
-        defaults: dict,
-        childclass: str | None,
-        world_xform: wp.transform,
-        body_relative_xform: wp.transform | None = None,
-        label_prefix: str = "",
-        track_root_boundaries: bool = False,
+            frames,
+            parent_body: int,
+            defaults: dict,
+            childclass: str | None,
+            world_xform: wp.transform,
+            body_relative_xform: wp.transform | None = None,
+            label_prefix: str = "",
+            track_root_boundaries: bool = False,
         infer_inertia_from_geoms: bool = False,
     ):
         """Process frame elements, composing transforms with children.
@@ -1810,12 +1813,12 @@ def parse_mjcf(
             )
 
     def parse_body(
-        body,
-        parent,
-        incoming_defaults: dict,
-        childclass: str | None = None,
-        incoming_xform: Transform | None = None,
-        parent_label_path: str = "",
+            body,
+            parent,
+            incoming_defaults: dict,
+            childclass: str | None = None,
+            incoming_xform: Transform | None = None,
+            parent_label_path: str = "",
     ):
         """Parse a body element from MJCF.
 
@@ -1995,9 +1998,9 @@ def parse_mjcf(
                 # (forwarded verbatim) before they switch the mode to
                 # ``SOLREF_MODE_FORCE_SPACE``.
                 if (
-                    "solreflimit" in joint_attrib
-                    and (limit_ke is None or limit_kd is None)
-                    and not (float(solreflimit[0]) == 0.0 and float(solreflimit[1]) == 0.0)
+                        "solreflimit" in joint_attrib
+                        and (limit_ke is None or limit_kd is None)
+                        and not (float(solreflimit[0]) == 0.0 and float(solreflimit[1]) == 0.0)
                 ):
                     warnings.warn(
                         f"MJCF joint {joint_attrib.get('name', 'unnamed')!r}: invalid "
@@ -2293,9 +2296,9 @@ def parse_mjcf(
                         f"MJCF diaginertia for body '{body_label_path}' must contain 3 values; got {len(diaginertia)}."
                     )
                 I_m = np.zeros((3, 3))
-                I_m[0, 0] = diaginertia[0] * scale**2
-                I_m[1, 1] = diaginertia[1] * scale**2
-                I_m[2, 2] = diaginertia[2] * scale**2
+                I_m[0, 0] = diaginertia[0] * scale ** 2
+                I_m[1, 1] = diaginertia[1] * scale ** 2
+                I_m[2, 2] = diaginertia[2] * scale ** 2
             else:
                 fullinertia = inertial_attrib.get("fullinertia")
                 if fullinertia is None:
@@ -2310,12 +2313,12 @@ def parse_mjcf(
                         f"got {fullinertia.shape[0]}."
                     )
                 I_m = np.zeros((3, 3))
-                I_m[0, 0] = fullinertia[0] * scale**2
-                I_m[1, 1] = fullinertia[1] * scale**2
-                I_m[2, 2] = fullinertia[2] * scale**2
-                I_m[0, 1] = fullinertia[3] * scale**2
-                I_m[0, 2] = fullinertia[4] * scale**2
-                I_m[1, 2] = fullinertia[5] * scale**2
+                I_m[0, 0] = fullinertia[0] * scale ** 2
+                I_m[1, 1] = fullinertia[1] * scale ** 2
+                I_m[2, 2] = fullinertia[2] * scale ** 2
+                I_m[0, 1] = fullinertia[3] * scale ** 2
+                I_m[0, 2] = fullinertia[4] * scale ** 2
+                I_m[1, 2] = fullinertia[5] * scale ** 2
                 I_m[1, 0] = I_m[0, 1]
                 I_m[2, 0] = I_m[0, 2]
                 I_m[2, 1] = I_m[1, 2]
@@ -2406,14 +2409,14 @@ def parse_mjcf(
             return common["name"]
 
         def add_converted_loop_joint(
-            eq_type: EqType,
-            body1: int,
-            body2: int,
-            anchor: wp.vec3,
-            relpose: wp.transform | None,
-            torquescale: float,
-            common: dict[str, Any],
-            custom_attrs: dict[str, Any],
+                eq_type: EqType,
+                body1: int,
+                body2: int,
+                anchor: wp.vec3,
+                relpose: wp.transform | None,
+                torquescale: float,
+                common: dict[str, Any],
+                custom_attrs: dict[str, Any],
         ) -> None:
             try:
                 mjc_add_equality_loop_joint(
@@ -2776,8 +2779,8 @@ def parse_mjcf(
         attr
         for attr in builder.custom_attributes.values()
         if isinstance(attr.frequency, str)
-        and attr.name.startswith("pair_")
-        and attr.name not in ("pair_geom1", "pair_geom2", "pair_world")
+           and attr.name.startswith("pair_")
+           and attr.name not in ("pair_geom1", "pair_geom2", "pair_world")
     ]
 
     # Only parse contact pairs if custom attributes are registered
@@ -2906,8 +2909,8 @@ def parse_mjcf(
         attr
         for attr in builder.custom_attributes.values()
         if isinstance(attr.frequency, str)
-        and attr.name.startswith("tendon_")
-        and attr.name not in _tendon_special_attrs
+           and attr.name.startswith("tendon_")
+           and attr.name not in _tendon_special_attrs
     ]
 
     def parse_tendons(tendon_section):
@@ -3386,12 +3389,12 @@ def parse_mjcf(
             actuator_values: dict[str, Any] = {}
             for attr in builder_custom_attr_actuator:
                 if attr.key in (
-                    "mujoco:ctrl_source",
+                        "mujoco:ctrl_source",
                     "mujoco:ctrl_type",
-                    "mujoco:actuator_trntype",
-                    "mujoco:actuator_gainprm",
-                    "mujoco:actuator_biasprm",
-                    "mujoco:ctrl",
+                        "mujoco:actuator_trntype",
+                        "mujoco:actuator_gainprm",
+                        "mujoco:actuator_biasprm",
+                        "mujoco:ctrl",
                 ):
                     continue
                 actuator_values[attr.key] = parsed_attrs.get(attr.key, attr.default)
